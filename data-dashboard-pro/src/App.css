@@ -339,6 +339,27 @@ body {
   margin-right: auto;
 }
 
+.chart-type-toggle {
+  background-color: var(--gradient-start);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.chart-type-toggle:hover {
+  background-color: var(--gradient-end);
+  transform: translateY(-2px);
+}
+
+.chart-type-toggle:active {
+  transform: translateY(0);
+}
+
 /* Detail view styles */
 .detail-container {
   max-width: 900px;
@@ -418,6 +439,12 @@ body {
   text-align: center;
   color: #ccc;
   font-size: 0.9rem;
+  padding: 10px;
+  border-left: 3px solid var(--gradient-start);
+}
+
+.map-placeholder p {
+  margin: 5px 0;
 }
 
 .nearby-breweries-list {

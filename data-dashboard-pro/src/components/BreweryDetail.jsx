@@ -20,6 +20,7 @@ function BreweryDetail() {
   const [nearbyBreweries, setNearbyBreweries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingNearby, setLoadingNearby] = useState(true);
+  const [chartType, setChartType] = useState("bar"); // New state for chart type
 
   useEffect(() => {
     const fetchBrewery = async () => {
@@ -44,6 +45,11 @@ function BreweryDetail() {
 
     fetchBrewery();
   }, [id]);
+
+  // Toggle chart type function
+  const toggleChartType = () => {
+    setChartType(chartType === "bar" ? "pie" : "bar");
+  };
 
   const fetchNearbyBreweries = async (city, state) => {
     try {
@@ -96,6 +102,84 @@ function BreweryDetail() {
     }));
   };
 
+  // Render chart based on selected type
+  const renderTypeComparisonChart = () => {
+    const data = getTypeComparisonData();
+    
+    if (chartType === "bar") {
+      return (
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart 
+            data={data}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <XAxis 
+              dataKey="type" 
+              stroke="#fff" 
+              tick={{ fill: '#fff' }} 
+            />
+            <YAxis 
+              stroke="#fff" 
+              tick={{ fill: '#fff' }} 
+            />
+            <Tooltip 
+              cursor={{ fill: 'rgba(255, 94, 54, 0.3)' }}  // Semi-transparent orange/red instead of gray
+              contentStyle={{ 
+                backgroundColor: '#fff', 
+                border: '1px solid #ddd', 
+                color: '#333',
+                borderRadius: '4px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+              }} 
+            />
+            <Legend 
+              wrapperStyle={{ color: '#fff' }} 
+            />
+            <Bar
+              dataKey="count" 
+              name="Number of breweries"
+              fill="#FF5A36"
+              strokeWidth={0}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      );
+    } else {
+      return (
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={data}
+              dataKey="count"
+              nameKey="type"
+              cx="50%"
+              cy="50%"
+              outerRadius={90}
+              label
+            >
+              {data.map((entry, index) => (
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={COLORS[index % COLORS.length]} 
+                />
+              ))}
+            </Pie>
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: '#fff', 
+                border: '1px solid #ddd', 
+                color: '#333',
+                borderRadius: '4px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+              }} 
+            />
+            <Legend wrapperStyle={{ color: '#fff' }} />
+          </PieChart>
+        </ResponsiveContainer>
+      );
+    }
+  };
+
   // Colors for charts
   const COLORS = ["#ff7e5f", "#feb47b", "#ffd166", "#06d6a0", "#118ab2"];
 
@@ -131,8 +215,19 @@ function BreweryDetail() {
               
               {brewery.latitude && brewery.longitude && (
                 <div className="map-placeholder">
-                  <p>Location: {brewery.latitude}, {brewery.longitude}</p>
-                  <p>A map would be displayed here in a full implementation</p>
+                  <p>
+                    Coordinates: {parseFloat(brewery.latitude).toFixed(4)}°N, {parseFloat(brewery.longitude).toFixed(4)}°W
+                  </p>
+                  <p>
+                    <a 
+                      href={`https://www.google.com/maps?q=${brewery.latitude},${brewery.longitude}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="maps-link"
+                    >
+                      View on Google Maps
+                    </a>
+                  </p>
                 </div>
               )}
             </div>
@@ -196,43 +291,22 @@ function BreweryDetail() {
               
               {getTypeComparisonData().length > 0 && (
                 <div className="chart-container" style={{ backgroundColor: 'rgba(30, 30, 30, 0.9)' }}>
-                <h3>Brewery Types in {brewery.city}</h3>
-                <p className="chart-description">
-                  This chart shows the different types of breweries found in {brewery.city}. {brewery.name} is highlighted.
-                </p>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart 
-                    data={getTypeComparisonData()}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                  <h3>Brewery Types in {brewery.city}</h3>
+                  <p className="chart-description">
+                    This chart shows the different types of breweries found in {brewery.city}. {brewery.name} is highlighted.
+                  </p>
+                  
+                  {/* Chart toggle button */}
+                  <button 
+                    className="chart-type-toggle" 
+                    onClick={toggleChartType}
                   >
-                    <XAxis 
-                      dataKey="type" 
-                      stroke="#fff" 
-                      tick={{ fill: '#fff' }} 
-                    />
-                    <YAxis 
-                      stroke="#fff" 
-                      tick={{ fill: '#fff' }} 
-                    />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: '#333', 
-                        border: '1px solid #555', 
-                        color: '#fff' 
-                      }} 
-                    />
-                    <Legend 
-                      wrapperStyle={{ color: '#fff' }} 
-                    />
-                    <Bar
-                    dataKey="count" 
-                    name="Number of breweries"
-                    fill="#FF5A36"
-                    strokeWidth={0}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
+                    Switch to {chartType === "bar" ? "Pie" : "Bar"} Chart
+                  </button>
+                  
+                  {/* Render chart based on selected type */}
+                  {renderTypeComparisonChart()}
+                </div>
               )}
             </>
           ) : (

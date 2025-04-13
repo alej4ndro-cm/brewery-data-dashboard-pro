@@ -27,6 +27,7 @@ function App() {
   const [breweryType, setBreweryType] = useState("");
   const [selectedState, setSelectedState] = useState("");
   const [showCharts, setShowCharts] = useState(true);
+  const [chartType, setChartType] = useState("bar"); // New state for chart type toggle
 
   useEffect(() => {
     const fetchBreweries = async () => {
@@ -63,6 +64,11 @@ function App() {
   const handleSearch = (e) => setSearchQuery(e.target.value);
   const handleBreweryTypeChange = (e) => setBreweryType(e.target.value);
   const handleStateChange = (e) => setSelectedState(e.target.value);
+  
+  // New function to toggle chart type
+  const toggleChartType = () => {
+    setChartType(chartType === "bar" ? "pie" : "bar");
+  };
 
   const getMostCommonType = () => {
     const typeCounts = {};
@@ -109,6 +115,163 @@ function App() {
 
   const COLORS = ["#ff7e5f", "#feb47b", "#ffd166", "#06d6a0", "#118ab2"];
 
+  // Render brewery type visualization based on selected chart type
+  const renderBreweryTypeChart = () => {
+    if (chartType === "bar") {
+      return (
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={breweryTypeData}>
+            <XAxis dataKey="type" stroke="#fff" tick={{ fill: '#fff' }} />
+            <YAxis stroke="#fff" tick={{ fill: '#fff' }} />
+            <Tooltip 
+              cursor={{ fill: 'rgba(255, 94, 54, 0.3)' }}  // Semi-transparent orange/red
+              contentStyle={{ 
+                backgroundColor: '#fff', 
+                border: '1px solid #ddd', 
+                color: '#333',
+                borderRadius: '4px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+              }} 
+            />
+            <Legend wrapperStyle={{ color: '#fff' }} />
+            <Bar dataKey="count" fill="#feb47b" name="Number of breweries" />
+          </BarChart>
+        </ResponsiveContainer>
+      );
+    } else {
+      return (
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={breweryTypeData}
+              dataKey="count"
+              nameKey="type"
+              cx="50%"
+              cy="50%"
+              outerRadius={90}
+              label
+            >
+              {breweryTypeData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: '#fff', 
+                border: '1px solid #ddd', 
+                color: '#333',
+                borderRadius: '4px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+              }} 
+            />
+            <Legend wrapperStyle={{ color: '#fff' }} />
+          </PieChart>
+        </ResponsiveContainer>
+      );
+    }
+  };
+
+  // Render state data visualization based on selected chart type
+  const renderStateDataChart = () => {
+    if (chartType === "bar") {
+      return (
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={stateData}>
+            <XAxis dataKey="state" stroke="#fff" tick={{ fill: '#fff' }} />
+            <YAxis stroke="#fff" tick={{ fill: '#fff' }} />
+            <Tooltip 
+              cursor={{ fill: 'rgba(6, 214, 160, 0.3)' }}  // Semi-transparent green
+              contentStyle={{ 
+                backgroundColor: '#fff', 
+                border: '1px solid #ddd', 
+                color: '#333',
+                borderRadius: '4px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+              }} 
+            />
+            <Legend wrapperStyle={{ color: '#fff' }} />
+            <Bar dataKey="count" fill="#06d6a0" name="Number of breweries" />
+          </BarChart>
+        </ResponsiveContainer>
+      );
+    } else {
+      return (
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={stateData}
+              dataKey="count"
+              nameKey="state"
+              cx="50%"
+              cy="50%"
+              outerRadius={90}
+              label
+            >
+              {stateData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: '#fff', 
+                border: '1px solid #ddd', 
+                color: '#333',
+                borderRadius: '4px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+              }} 
+            />
+            <Legend wrapperStyle={{ color: '#fff' }} />
+          </PieChart>
+        </ResponsiveContainer>
+      );
+    }
+  };
+  
+  const renderStateBreweryTypeChart = () => {
+    if (chartType === "bar") {
+      return (
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={stateBreweryTypeData}>
+            <XAxis dataKey="type" stroke="#fff" tick={{ fill: '#fff' }} />
+            <YAxis stroke="#fff" tick={{ fill: '#fff' }} />
+            <Tooltip 
+              cursor={{ fill: 'rgba(136, 132, 216, 0.3)' }}  // Semi-transparent purple
+              contentStyle={{ 
+                backgroundColor: '#fff', 
+                border: '1px solid #ddd', 
+                color: '#333',
+                borderRadius: '4px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+              }} 
+            />
+            <Legend wrapperStyle={{ color: '#fff' }} />
+            <Bar dataKey="count" fill="#8884d8" name="Number of breweries" />
+          </BarChart>
+        </ResponsiveContainer>
+      );
+    } else {
+      return (
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={stateBreweryTypeData}>
+            <XAxis dataKey="type" stroke="#fff" tick={{ fill: '#fff' }} />
+            <YAxis stroke="#fff" tick={{ fill: '#fff' }} />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: '#fff', 
+                border: '1px solid #ddd', 
+                color: '#333',
+                borderRadius: '4px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+              }} 
+            />
+            <Legend wrapperStyle={{ color: '#fff' }} />
+            <Line type="monotone" dataKey="count" stroke="#8884d8" activeDot={{ r: 8 }} />
+          </LineChart>
+        </ResponsiveContainer>
+      );
+    }
+  };
+
   // This is the main dashboard view
   const DashboardView = () => (
     <div className="container">
@@ -136,56 +299,39 @@ function App() {
                   These charts help explore the brewery scene across the U.S. Try applying filters to see how brewery types and states are distributed!
                 </p>
 
+                {/* Chart toggle button - moved up here to affect all charts */}
+                <button 
+                  className="chart-type-toggle" 
+                  onClick={toggleChartType}
+                >
+                  Switch to {chartType === "bar" ? "Pie" : "Bar"} Chart
+                </button>
+
                 <div className="chart-container">
                   <h3>Brewery Count by Type</h3>
-                  <p className="chart-description">This visualization shows which brewery types are most common.</p>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={breweryTypeData}>
-                      <XAxis dataKey="type" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="count" fill="#feb47b" />
-                    </BarChart>
-                  </ResponsiveContainer>
+                  <p className="chart-description">
+                    This visualization shows which brewery types are most common.
+                  </p>
+                  
+                  {/* Render chart based on selected type */}
+                  {renderBreweryTypeChart()}
                 </div>
 
                 <div className="chart-container">
                   <h3>Top 5 States by Breweries</h3>
-                  <p className="chart-description">This pie chart shows which states have the most breweries.</p>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={stateData}
-                        dataKey="count"
-                        nameKey="state"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={90}
-                        label
-                      >
-                        {stateData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  <p className="chart-description">
+                    This chart shows which states have the most breweries.
+                  </p>
+                  {renderStateDataChart()}
                 </div>
 
                 {selectedState && stateBreweryTypeData.length > 0 && (
                   <div className="chart-container">
                     <h3>Brewery Types in {selectedState}</h3>
-                    <p className="chart-description">This chart shows the distribution of brewery types in {selectedState}.</p>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <LineChart data={stateBreweryTypeData}>
-                        <XAxis dataKey="type" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Line type="monotone" dataKey="count" stroke="#8884d8" activeDot={{ r: 8 }} />
-                      </LineChart>
-                    </ResponsiveContainer>
+                    <p className="chart-description">
+                      This chart shows the distribution of brewery types in {selectedState}.
+                    </p>
+                    {renderStateBreweryTypeChart()}
                   </div>
                 )}
               </div>
