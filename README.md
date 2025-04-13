@@ -50,7 +50,7 @@ By the end of this project, I was able to:
 
 ## **Video Walkthrough**
 
-![Video Walkthrough](https://i.imgur.com/nAwBo8K.gif)
+![Video Walkthrough](https://i.imgur.com/wf7e7MQ.gif)
 
 GIF created with [peek](https://github.com/phw/peek) for Linux.
 
